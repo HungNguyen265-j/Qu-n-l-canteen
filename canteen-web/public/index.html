@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Căng Tin Trường Học</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<!-- AUTH -->
+<div class="auth-wrap" id="authPage">
+  <div class="auth-card" id="cardCustomer" style="max-width:420px;width:100%">
+    <div class="auth-logo"><div class="icon">🍽️</div><h1>Căng Tin Trường Học</h1><p>Đặt món nhanh, thanh toán tiện lợi</p></div>
+    <div style="display:flex;border-bottom:2px solid var(--border);margin-bottom:22px">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:700;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px;cursor:pointer">🔑 Đăng nhập</button>
+      <button id="tabRegister" onclick="switchTab('register')" style="flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;color:var(--text-muted);cursor:pointer">📝 Đăng ký</button>
+    </div>
+    <div id="formLogin">
+      <div class="form-group"><label>Email hoặc số điện thoại</label><input type="text" id="loginUser"></div>
+      <div class="form-group"><label>Mật khẩu</label><input type="password" id="loginPass"></div>
+      <button class="btn btn-primary btn-full" onclick="doLoginCustomer()">🔑 Đăng nhập</button>
+      <p style="text-align:center;margin-top:16px;font-size:11px;color:var(--border)">Demo: hai@phenikaa.edu.vn / 123456</p>
+    </div>
+    <div id="formRegister" style="display:none">
+      <div class="form-group"><label>Họ và tên *</label><input type="text" id="regName"></div>
+      <div class="form-group"><label>Email *</label><input type="email" id="regEmail"></div>
+      <div class="form-group"><label>Mật khẩu *</label><input type="password" id="regPass"></div>
+      <button class="btn btn-success btn-full" onclick="doRegister()">✅ Tạo tài khoản</button>
+    </div>
+    <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+      <p style="font-size:12px;color:var(--text-muted)">Bạn là nhân viên? <a href="#" onclick="showStaffLogin()" style="color:var(--primary);font-weight:600">Đăng nhập nhân viên →</a></p>
+    </div>
+  </div>
+  <div class="auth-card" id="cardStaff" style="max-width:420px;width:100%;display:none">
+    <div class="auth-logo"><div class="icon">👔</div><h1>Đăng nhập Nhân viên</h1></div>
+    <div class="form-group"><label>Email</label><input type="text" id="staffUser" value="admin@canteen.vn"></div>
+    <div class="form-group"><label>Mật khẩu</label><input type="password" id="staffPass" value="123456"></div>
+    <div class="form-group"><label>Vai trò</label>
+      <select id="staffRole">
+        <option value="admin">Quản trị viên</option>
+        <option value="phucvu">NV Phục vụ</option>
+        <option value="bep">NV Bếp</option>
+        <option value="kho">NV Kho</option>
+        <option value="ketoan">NV Kế toán</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLoginStaff()">🔑 Đăng nhập</button>
+    <div style="text-align:center;margin-top:16px"><a href="#" onclick="showCustomerLogin()" style="font-size:12px;color:var(--text-muted)">← Quay lại</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appWrap">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo">🍽️</div><div><h2>Căng Tin</h2><p>Trường học</p></div></div>
+    <div class="sidebar-role" id="sidebarRole">QUẢN TRỊ VIÊN</div>
+    <nav id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatarSB">A</div>
+        <div><div class="name" id="userNameSB">Admin</div><div class="role" id="userRoleSB">Quản trị viên</div></div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">🚪 Đăng xuất</button>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <h2 id="topbarTitle">Tổng quan</h2>
+      <span style="font-size:13px;color:var(--text-muted)" id="topbarDate"></span>
+      <div style="font-size:13px;font-weight:600" id="topbarUser"></div>
+    </div>
+    <div class="content">
+      <!-- HOME -->
+      <div class="page active" id="page-home">
+        <div class="stats-row" id="homeStats"></div>
+        <div class="card"><div class="card-header"><h3>⚠️ Nguyên liệu sắp hết</h3></div><div class="card-body" id="homeLowStock"></div></div>
+      </div>
+      <!-- BAN HANG -->
+      <div class="page" id="page-banhang">
+        <div class="grid-2" style="gap:20px;align-items:start">
+          <div>
+            <div class="filters">
+              <input type="text" id="menuSearch" placeholder="🔍 Tìm món..." oninput="renderMenu()">
+              <select id="menuCat" onchange="renderMenu()"><option value="">Tất cả</option></select>
+            </div>
+            <div class="menu-grid" id="menuGrid"></div>
+          </div>
+          <div class="cart-wrap card" id="cartPanel">
+            <div class="card-header"><h3>🛒 Giỏ hàng</h3><button class="btn btn-sm btn-outline" onclick="clearCart()">Xóa</button></div>
+            <div class="card-body">
+              <div id="cartItems"></div>
+              <div class="divider"></div>
+              <div class="form-group"><label>Khung giờ nhận món</label>
+                <select id="pickupTime"><option>11:00 - 11:30</option><option>11:30 - 12:00</option><option>12:00 - 12:30</option></select>
+              </div>
+              <div class="form-group"><label>Ghi chú</label><input type="text" id="orderNote"></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:14px"><span>Tổng cộng:</span><span class="cart-total" id="cartTotal">0đ</span></div>
+              <div class="form-group"><label>Thanh toán</label>
+                <select id="payMethod"><option>Ví Canteen</option><option>Tiền mặt</option></select>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="placeOrder()">✅ Đặt món</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- BEP -->
+      <div class="page" id="page-bep">
+        <div class="kitchen-cols" id="kitchenCols"></div>
+      </div>
+      <!-- LICH SU -->
+      <div class="page" id="page-lichsu">
+        <div class="card"><div class="card-body"><div id="orderHistory"></div></div></div>
+      </div>
+      <!-- KHO -->
+      <div class="page" id="page-kho">
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-success btn-sm" onclick="stockAction('in')">📥 Nhập kho</button>
+          <button class="btn btn-warning btn-sm" onclick="stockAction('out')">📤 Xuất kho</button>
+          <button class="btn btn-info btn-sm" onclick="openAdjustModal()">⚖️ Điều chỉnh tồn</button>
+          <button class="btn btn-primary btn-sm" onclick="openStocktakeModal()">📋 Kiểm kê</button>
+          <button class="btn btn-info btn-sm" onclick="loadSuppliers()">🏢 Nhà cung cấp</button>
+          <button class="btn btn-primary btn-sm" onclick="loadPO()">🧾 Hóa đơn</button>
+        </div>
+        <div class="card"><div class="card-header"><h3>📦 Tồn kho</h3></div><div class="card-body" id="stockTable"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>📥 Lịch sử nhập hàng</h3></div><div class="card-body" id="receiptHistory"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>🏢 Nhà cung cấp</h3></div><div class="card-body" id="supplierTable"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>🧾 Hóa đơn</h3></div><div class="card-body" id="poTable"></div></div>
+      </div>
+      <!-- TAI CHINH -->
+      <div class="page" id="page-taichinh">
+        <div class="kpi-row" id="financeKpi"></div>
+        <div class="card"><div class="card-header"><h3>💳 Giao dịch</h3></div><div class="card-body" id="txTable"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>💳 Ví Canteen</h3></div><div class="card-body">
+          <div>Số dư: <b id="walletBalance">0đ</b></div>
+        </div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>🏷️ Vé tháng</h3></div><div class="card-body" id="ticketSection"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>💸 Chi phí</h3></div><div class="card-body" id="expenseSection"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>📊 Đối soát</h3></div><div class="card-body" id="reconSection"></div></div>
+      </div>
+      <!-- BAO CAO -->
+      <div class="page" id="page-baocao">
+        <div class="kpi-row" id="reportKpi"></div>
+        <div class="card"><div class="card-header"><h3>📈 Doanh thu theo ngày</h3></div><div class="card-body" id="reportChart"></div></div>
+      </div>
+      <!-- QUAN TRI -->
+      <div class="page" id="page-quantri">
+        <div class="card"><div class="card-header"><h3>👥 Tài khoản</h3></div><div class="card-body" id="usersTable"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>⚙️ Cấu hình</h3></div><div class="card-body" id="configForm"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>👥 Nhân viên</h3></div><div class="card-body" id="empSection"></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-header"><h3>🛡️ Vai trò</h3></div><div class="card-body" id="roleSection"></div></div>
+      </div>
+      <!-- MON AN -->
+      <div class="page" id="page-monan">
+        <div class="card"><div class="card-header"><h3>🍜 Quản lý món ăn</h3><button class="btn btn-primary btn-sm" onclick="openModal('modalDish')">➕ Thêm</button></div><div class="card-body" id="dishTable"></div></div>
+      </div>
+      <!-- CA LAM -->
+      <div class="page" id="page-calamviec">
+        <div class="card"><div class="card-header"><h3>📅 Ca làm & chấm công</h3></div><div class="card-body" id="shiftInfo"></div></div>
+      </div>
+      <!-- HO SO -->
+      <div class="page" id="page-hoso">
+        <div class="card"><div class="card-body">
+          <div>Họ tên: <b id="profileName"></b></div>
+          <div>Email: <b id="profileEmail"></b></div>
+          <div>Số dư ví: <b id="profileWallet"></b></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL NHAP KHO -->
+<div class="modal-bg" id="modalNhapKho">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalNhapKho')">✕</button>
+    <h3>📥 Phiếu nhập kho</h3>
+    <div class="form-group"><label>Nguyên liệu *</label><select id="nkIngredient"></select></div>
+    <div class="form-group"><label>Số lượng nhập *</label><input type="number" id="nkQty" min="0.01"></div>
+    <div class="form-group"><label>Đơn vị</label><input type="text" id="nkUnit" readonly></div>
+    <div class="form-group"><label>Hạn sử dụng *</label><input type="date" id="nkExpiry"></div>
+    <div class="form-group"><label>Nhà cung cấp</label><select id="nkSupplier"></select></div>
+    <div class="form-group"><label>Ghi chú</label><input type="text" id="nkNote"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-success" onclick="submitReceipt()">✅ Xác nhận nhập</button>
+      <button class="btn btn-outline" onclick="closeModal('modalNhapKho')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL DANH GIA -->
+<div class="modal-bg" id="modalReview">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalReview')">✕</button>
+    <h3>⭐ Đánh giá món ăn</h3>
+    <div class="form-group"><label>Món ăn</label><select id="reviewDish"></select></div>
+    <div class="form-group"><label>Mã đơn</label><input type="number" id="reviewOrder"></div>
+    <div class="form-group"><label>Điểm (1-5)</label><input type="number" id="reviewRating" min="1" max="5"></div>
+    <div class="form-group"><label>Nhận xét</label><input type="text" id="reviewComment"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="submitReview()">Gửi đánh giá</button>
+      <button class="btn btn-outline" onclick="closeModal('modalReview')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL THEM NCC -->
+<div class="modal-bg" id="modalAddSupplier">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalAddSupplier')">✕</button>
+    <h3>🏢 Thêm nhà cung cấp</h3>
+    <div class="form-group"><label>Tên *</label><input type="text" id="supName"></div>
+    <div class="form-group"><label>Liên hệ</label><input type="text" id="supContact"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-success" onclick="submitSupplier()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalAddSupplier')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL TAO HOA DON -->
+<div class="modal-bg" id="modalCreatePO">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalCreatePO')">✕</button>
+    <h3>🧾 Tạo hóa đơn nhập</h3>
+    <div class="form-group"><label>Nhà cung cấp *</label><select id="poSupplier"></select></div>
+    <div class="form-group"><label>Nguyên liệu *</label><select id="poIngredient"></select></div>
+    <div class="form-group"><label>Số lượng *</label><input type="number" id="poQty" min="0.01"></div>
+    <div class="form-group"><label>Đơn giá *</label><input type="number" id="poPrice" min="0"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="submitPO()">Tạo</button>
+      <button class="btn btn-outline" onclick="closeModal('modalCreatePO')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL CHI PHI -->
+<div class="modal-bg" id="modalExpense">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalExpense')">✕</button>
+    <h3>💸 Thêm chi phí</h3>
+    <div class="form-group"><label>Mô tả *</label><input type="text" id="expDesc"></div>
+    <div class="form-group"><label>Số tiền *</label><input type="number" id="expAmount"></div>
+    <div class="form-group"><label>Nhóm</label><input type="text" id="expCat"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-success" onclick="submitExpense()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalExpense')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL NHAN VIEN -->
+<div class="modal-bg" id="modalEmployee">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalEmployee')">✕</button>
+    <h3>👥 Thêm nhân viên</h3>
+    <div class="form-group"><label>Họ tên *</label><input type="text" id="empName"></div>
+    <div class="form-group"><label>Chức vụ</label><input type="text" id="empPos"></div>
+    <div class="form-group"><label>Bộ phận</label><input type="text" id="empDept"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-success" onclick="submitEmployee()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalEmployee')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL THEM MON -->
+<div class="modal-bg" id="modalDish">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalDish')">✕</button>
+    <h3>🍜 Thêm/Sửa món ăn</h3>
+    <div class="form-group"><label>Tên món *</label><input type="text" id="dishName"></div>
+    <div class="form-group"><label>Danh mục (ID 1-3) *</label><input type="number" id="dishCat" min="1" max="3"></div>
+    <div class="form-group"><label>Giá bán *</label><input type="number" id="dishPrice" min="1"></div>
+    <div class="form-group"><label>Trạng thái</label><select id="dishStatus"><option value="active">Còn hàng</option><option value="out">Hết hàng</option></select></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="submitDish()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalDish')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL DOI SOAT -->
+<div class="modal-bg" id="modalRecon">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalRecon')">✕</button>
+    <h3>📊 Đối soát thanh toán</h3>
+    <div class="form-group"><label>Kỳ (VD T11/2026) *</label><input type="text" id="reconPeriod"></div>
+    <div class="form-group"><label>Tổng hệ thống *</label><input type="number" id="reconSystem"></div>
+    <div class="form-group"><label>Thực thu *</label><input type="number" id="reconActual"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="submitRecon()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalRecon')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL DIEU CHINH TON -->
+<div class="modal-bg" id="modalAdjust">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalAdjust')">✕</button>
+    <h3>⚖️ Điều chỉnh tồn kho</h3>
+    <div class="form-group"><label>Nguyên liệu *</label><select id="adjIngredient"></select></div>
+    <div class="form-group"><label>Chênh lệch (+/-) *</label><input type="number" id="adjDiff" step="0.01"></div>
+    <div class="form-group"><label>Lý do *</label><input type="text" id="adjReason"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-warning" onclick="submitAdjust()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalAdjust')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL KIEM KE -->
+<div class="modal-bg" id="modalStocktake">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalStocktake')">✕</button>
+    <h3>📋 Kiểm kê kho</h3>
+    <div class="form-group"><label>Nguyên liệu *</label><select id="stIngredient"></select></div>
+    <div class="form-group"><label>Số lượng thực tế *</label><input type="number" id="stActual" step="0.01"></div>
+    <div class="form-group"><label>Lý do</label><input type="text" id="stReason"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="submitStocktake()">Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalStocktake')">Hủy</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL XUAT KHO -->
+<div class="modal-bg" id="modalXuatKho">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalXuatKho')">✕</button>
+    <h3>📤 Phiếu xuất kho</h3>
+    <div class="form-group"><label>Nguyên liệu *</label><select id="xkIngredient"></select></div>
+    <div class="form-group"><label>Số lượng xuất *</label><input type="number" id="xkQty" min="0.01"></div>
+    <div class="form-group"><label>Lý do xuất</label><input type="text" id="xkReason"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-warning" onclick="submitIssue()">✅ Xác nhận xuất</button>
+      <button class="btn btn-outline" onclick="closeModal('modalXuatKho')">Hủy</button>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

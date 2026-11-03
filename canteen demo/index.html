@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Căng Tin Trường Học</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- AUTH WRAPPER -->
+<div class="auth-wrap" id="authPage">
+
+  <!-- ===== CARD KHÁCH HÀNG (mặc định) ===== -->
+  <div class="auth-card" id="cardCustomer" style="max-width:420px;width:100%">
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="icon">🍽️</div>
+      <h1>Căng Tin Trường Học</h1>
+      <p>Đặt món nhanh, thanh toán tiện lợi</p>
+    </div>
+
+    <!-- Tab Đăng nhập / Đăng ký -->
+    <div style="display:flex;border-bottom:2px solid var(--border);margin-bottom:22px">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:700;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px;cursor:pointer">🔑 Đăng nhập</button>
+      <button id="tabRegister" onclick="switchTab('register')" style="flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;color:var(--text-muted);cursor:pointer">📝 Đăng ký</button>
+    </div>
+
+    <!-- FORM ĐĂNG NHẬP KHÁCH HÀNG -->
+    <div id="formLogin">
+      <div class="form-group">
+        <label>Email hoặc số điện thoại</label>
+        <input type="text" id="loginUser" placeholder="example@phenikaa.edu.vn" value="">
+      </div>
+      <div class="form-group">
+        <label>Mật khẩu</label>
+        <div style="position:relative">
+          <input type="password" id="loginPass" placeholder="Nhập mật khẩu" value="" style="padding-right:40px">
+          <span onclick="togglePass('loginPass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text-muted)">👁</span>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:13px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:normal"><input type="checkbox"> Nhớ đăng nhập</label>
+        <a href="#" style="color:var(--primary)">Quên mật khẩu?</a>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLoginCustomer()">🔑 Đăng nhập</button>
+      <div style="text-align:center;margin:14px 0;color:var(--text-muted);font-size:12px;position:relative">
+        <span style="background:#fff;padding:0 10px;position:relative;z-index:1">hoặc</span>
+        <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)"></div>
+      </div>
+      <p style="text-align:center;font-size:12px;color:var(--text-muted)">Chưa có tài khoản? <a href="#" onclick="switchTab('register')" style="color:var(--primary);font-weight:600">Đăng ký ngay</a></p>
+      <p style="text-align:center;margin-top:16px;font-size:11px;color:var(--border)">─────── Tài khoản demo ───────</p>
+      <p style="text-align:center;font-size:12px;color:var(--text-muted)">Email: <b>hai@phenikaa.edu.vn</b> &nbsp;|&nbsp; Mật khẩu: <b>123456</b></p>
+    </div>
+
+    <!-- FORM ĐĂNG KÝ KHÁCH HÀNG -->
+    <div id="formRegister" style="display:none">
+      <div class="form-group">
+        <label>Họ và tên *</label>
+        <input type="text" id="regName" placeholder="Nguyễn Văn A">
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="regEmail" placeholder="example@phenikaa.edu.vn">
+      </div>
+      <div class="form-group">
+        <label>Số điện thoại *</label>
+        <input type="tel" id="regPhone" placeholder="0987654321">
+      </div>
+      <div class="form-group">
+        <label>Mã số sinh viên <span style="color:var(--text-muted);font-weight:400">(không bắt buộc)</span></label>
+        <input type="text" id="regStudentId" placeholder="PH12345">
+      </div>
+      <div class="form-group">
+        <label>Mật khẩu *</label>
+        <input type="password" id="regPass" placeholder="Tối thiểu 8 ký tự">
+      </div>
+      <div class="form-group">
+        <label>Xác nhận mật khẩu *</label>
+        <input type="password" id="regPass2" placeholder="Nhập lại mật khẩu">
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;font-size:13px">
+        <input type="checkbox" id="regAgree" style="width:auto;margin-top:2px">
+        <label for="regAgree" style="font-weight:normal;cursor:pointer">Tôi đồng ý với <a href="#" style="color:var(--primary)">điều khoản sử dụng</a> và <a href="#" style="color:var(--primary)">chính sách bảo mật</a></label>
+      </div>
+      <button class="btn btn-success btn-full" onclick="doRegister()">✅ Tạo tài khoản</button>
+      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-muted)">Đã có tài khoản? <a href="#" onclick="switchTab('login')" style="color:var(--primary);font-weight:600">Đăng nhập ngay</a></p>
+    </div>
+
+    <!-- Link chuyển sang nhân viên -->
+    <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+      <p style="font-size:12px;color:var(--text-muted)">Bạn là nhân viên hoặc quản trị viên? <a href="#" onclick="showStaffLogin()" style="color:var(--primary);font-weight:600">Đăng nhập nhân viên →</a></p>
+    </div>
+  </div>
+
+  <!-- ===== CARD NHÂN VIÊN / ADMIN (ẩn mặc định) ===== -->
+  <div class="auth-card" id="cardStaff" style="max-width:420px;width:100%;display:none">
+    <div class="auth-logo">
+      <div class="icon">👔</div>
+      <h1>Đăng nhập Nhân viên</h1>
+      <p>Dành cho nhân viên và quản trị viên</p>
+    </div>
+    <div class="form-group">
+      <label>Email / Tài khoản</label>
+      <input type="text" id="staffUser" placeholder="Tài khoản được cấp" value="admin@canteen.vn">
+    </div>
+    <div class="form-group">
+      <label>Mật khẩu</label>
+      <div style="position:relative">
+        <input type="password" id="staffPass" placeholder="Nhập mật khẩu" value="123456" style="padding-right:40px">
+        <span onclick="togglePass('staffPass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text-muted)">👁</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Vai trò</label>
+      <select id="staffRole">
+        <option value="admin">👑 Quản trị viên</option>
+        <option value="phucvu">🍽️ Nhân viên phục vụ</option>
+        <option value="bep">👨‍🍳 Nhân viên bếp</option>
+        <option value="kho">📦 Nhân viên kho</option>
+        <option value="ketoan">💼 Nhân viên kế toán</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLoginStaff()">🔑 Đăng nhập</button>
+    <div style="text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+      <a href="#" onclick="showCustomerLogin()" style="font-size:12px;color:var(--text-muted)">← Quay lại trang khách hàng</a>
+    </div>
+    <p style="text-align:center;margin-top:10px;font-size:11px;color:var(--border)">─── Tài khoản demo: admin@canteen.vn / 123456 ───</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appWrap">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">🍽️</div>
+      <div>
+        <h2>Căng Tin</h2>
+        <p>Trường học</p>
+      </div>
+    </div>
+    <div class="sidebar-role" id="sidebarRole">QUẢN TRỊ VIÊN</div>
+    <nav id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatarSB">A</div>
+        <div>
+          <div class="name" id="userNameSB">Admin</div>
+          <div class="role" id="userRoleSB">Quản trị viên</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">🚪 Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h2 id="topbarTitle">Tổng quan</h2>
+      <span style="font-size:13px;color:var(--text-muted)" id="topbarDate"></span>
+      <div class="badge-notif" style="cursor:pointer" onclick="showToast('Bạn có 3 thông báo mới','info')">
+        🔔<span class="dot"></span>
+      </div>
+      <div style="font-size:13px;font-weight:600" id="topbarUser"></div>
+    </div>
+    <div class="content">
+
+      <!-- ===== TRANG CHỦ ===== -->
+      <div class="page active" id="page-home">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon orange">💰</div>
+            <div><div class="stat-value">3.250.000đ</div><div class="stat-label">Doanh thu hôm nay</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">📋</div>
+            <div><div class="stat-value">127</div><div class="stat-label">Đơn hàng hôm nay</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">🍜</div>
+            <div><div class="stat-value">Bún bò</div><div class="stat-label">Món bán chạy nhất</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">⚠️</div>
+            <div><div class="stat-value">4</div><div class="stat-label">Nguyên liệu sắp hết</div></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>📈 Doanh thu 7 ngày</h3></div>
+            <div class="card-body">
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:60%"><div class="tip">T2: 2.8tr</div></div>
+                <div class="chart-bar" style="height:75%"><div class="tip">T3: 3.1tr</div></div>
+                <div class="chart-bar" style="height:55%"><div class="tip">T4: 2.5tr</div></div>
+                <div class="chart-bar" style="height:90%"><div class="tip">T5: 3.8tr</div></div>
+                <div class="chart-bar" style="height:80%"><div class="tip">T6: 3.4tr</div></div>
+                <div class="chart-bar" style="height:45%"><div class="tip">T7: 2.0tr</div></div>
+                <div class="chart-bar" style="height:70%"><div class="tip">CN: 3.0tr</div></div>
+              </div>
+              <div class="chart-labels"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🔥 Top món bán chạy</h3></div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>#</th><th>Món ăn</th><th>Số lượng</th><th>Doanh thu</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>🍜 Bún bò</td><td><b>48</b></td><td>1.200.000đ</td></tr>
+                  <tr><td>2</td><td>🍚 Cơm sườn</td><td><b>35</b></td><td>875.000đ</td></tr>
+                  <tr><td>3</td><td>🧋 Trà sữa</td><td><b>62</b></td><td>620.000đ</td></tr>
+                  <tr><td>4</td><td>🥗 Bánh mì</td><td><b>29</b></td><td>435.000đ</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div style="height:16px"></div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>🕐 Đơn hàng mới nhất</h3></div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+                <tbody>
+                  <tr><td>#DH001</td><td>Nguyễn Văn A</td><td>65.000đ</td><td><span class="badge badge-warning">Đang chế biến</span></td></tr>
+                  <tr><td>#DH002</td><td>Trần Thị B</td><td>45.000đ</td><td><span class="badge badge-success">Hoàn thành</span></td></tr>
+                  <tr><td>#DH003</td><td>Lê Minh C</td><td>85.000đ</td><td><span class="badge badge-info">Chờ xác nhận</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>⚠️ Cảnh báo nguyên liệu</h3></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px"><span>🌾 Gạo</span><span class="badge badge-warning">Sắp hết</span></div>
+                  <div class="progress"><div class="progress-fill" style="width:25%;background:var(--warning)"></div></div>
+                  <span style="font-size:11px;color:var(--text-muted)">5kg / 20kg tối thiểu</span>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px"><span>🥩 Thịt bò</span><span class="badge badge-danger">Sắp hết</span></div>
+                  <div class="progress"><div class="progress-fill" style="width:15%;background:var(--danger)"></div></div>
+                  <span style="font-size:11px;color:var(--text-muted)">1.5kg / 10kg tối thiểu</span>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px"><span>🧴 Dầu ăn</span><span class="badge badge-warning">Sắp hết</span></div>
+                  <div class="progress"><div class="progress-fill" style="width:30%;background:var(--warning)"></div></div>
+                  <span style="font-size:11px;color:var(--text-muted)">3L / 10L tối thiểu</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BÁN HÀNG ===== -->
+      <div class="page" id="page-banhang">
+        <div class="grid-2" style="gap:20px;align-items:start">
+          <div>
+            <div class="filters">
+              <input type="text" placeholder="🔍 Tìm món..." style="flex:1">
+              <select id="menuCat">
+                <option value="">Tất cả danh mục</option>
+                <option value="main">Món chính</option>
+                <option value="drink">Đồ uống</option>
+                <option value="snack">Ăn vặt</option>
+              </select>
+            </div>
+            <div class="menu-grid" id="menuGrid"></div>
+          </div>
+          <div class="cart-wrap card" id="cartPanel">
+            <div class="card-header"><h3>🛒 Giỏ hàng</h3><button class="btn btn-sm btn-outline" onclick="clearCart()">Xóa tất cả</button></div>
+            <div class="card-body">
+              <div id="cartItems"><div class="empty-state"><div class="icon">🛒</div><p>Chưa có món nào</p></div></div>
+              <div class="divider"></div>
+              <div class="form-group">
+                <label>Khung giờ nhận món</label>
+                <select id="pickupTime">
+                  <option>11:00 - 11:30</option>
+                  <option>11:30 - 12:00</option>
+                  <option>12:00 - 12:30</option>
+                  <option>12:30 - 13:00</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Ghi chú</label>
+                <input type="text" placeholder="Không cay, ít đường...">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                <span style="font-size:14px;font-weight:600">Tổng cộng:</span>
+                <span class="cart-total" id="cartTotal">0đ</span>
+              </div>
+              <div class="form-group">
+                <label>Phương thức thanh toán</label>
+                <select id="payMethod">
+                  <option>💳 Ví Canteen (Số dư: 150.000đ)</option>
+                  <option>📱 QR Ngân hàng</option>
+                  <option>💵 Tiền mặt</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="placeOrder()">✅ Xác nhận đặt món</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== NHÀ BẾP ===== -->
+      <div class="page" id="page-bep">
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Đã làm mới danh sách','success')">🔄 Làm mới</button>
+          <select style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px">
+            <option>Tất cả khung giờ</option><option>11:00-11:30</option><option>11:30-12:00</option>
+          </select>
+        </div>
+        <div class="kitchen-cols">
+          <div class="kitchen-col pending">
+            <h3>⏳ Chờ xử lý (3)</h3>
+            <div class="kitchen-card pending">
+              <div class="order-id">#DH003 — Lê Minh C</div>
+              <div class="items">• Bún bò x1<br>• Trà sữa x2</div>
+              <div class="time">🕐 11:00-11:30 &nbsp; Đặt lúc 10:42</div>
+              <div style="margin-top:8px;display:flex;gap:6px">
+                <button class="btn btn-warning btn-sm" onclick="moveKitchen(this,'cooking')">🍳 Bắt đầu</button>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Đã xem chi tiết','info')">Chi tiết</button>
+              </div>
+            </div>
+            <div class="kitchen-card pending">
+              <div class="order-id">#DH004 — Phạm Thu D</div>
+              <div class="items">• Cơm sườn x2<br>• Nước ngọt x1</div>
+              <div class="time">🕐 11:30-12:00 &nbsp; Đặt lúc 10:51</div>
+              <div style="margin-top:8px"><button class="btn btn-warning btn-sm" onclick="moveKitchen(this,'cooking')">🍳 Bắt đầu</button></div>
+            </div>
+            <div class="kitchen-card pending">
+              <div class="order-id">#DH005 — Vũ Anh E</div>
+              <div class="items">• Phở bò x1</div>
+              <div class="time">🕐 12:00-12:30 &nbsp; Đặt lúc 11:05</div>
+              <div style="margin-top:8px"><button class="btn btn-warning btn-sm" onclick="moveKitchen(this,'cooking')">🍳 Bắt đầu</button></div>
+            </div>
+          </div>
+          <div class="kitchen-col cooking">
+            <h3>🍳 Đang chế biến (2)</h3>
+            <div class="kitchen-card cooking">
+              <div class="order-id">#DH001 — Nguyễn Văn A</div>
+              <div class="items">• Bún bò x1<br>• Chè x1</div>
+              <div class="time">🕐 11:00-11:30 &nbsp; Bắt đầu: 10:55</div>
+              <div style="margin-top:8px"><button class="btn btn-success btn-sm" onclick="moveKitchen(this,'done')">✅ Hoàn thành</button></div>
+            </div>
+            <div class="kitchen-card cooking">
+              <div class="order-id">#DH002 — Trần Thị B</div>
+              <div class="items">• Cơm gà x1<br>• Sinh tố x1</div>
+              <div class="time">🕐 11:00-11:30 &nbsp; Bắt đầu: 10:58</div>
+              <div style="margin-top:8px"><button class="btn btn-success btn-sm" onclick="moveKitchen(this,'done')">✅ Hoàn thành</button></div>
+            </div>
+          </div>
+          <div class="kitchen-col done">
+            <h3>✅ Hoàn thành (1)</h3>
+            <div class="kitchen-card done">
+              <div class="order-id">#DH000 — Hải Đình</div>
+              <div class="items">• Bún riêu x1<br>• Trà đá x1</div>
+              <div class="time">🕐 Hoàn thành: 10:48 &nbsp;<span class="badge badge-success">Đã giao</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LỊCH SỬ ĐƠN ===== -->
+      <div class="page" id="page-lichsu">
+        <div class="card">
+          <div class="card-header"><h3>📋 Lịch sử đơn hàng</h3><button class="btn btn-primary btn-sm" onclick="showToast('Đã xuất Excel','success')">📥 Xuất Excel</button></div>
+          <div class="card-body">
+            <div class="filters">
+              <input type="text" placeholder="🔍 Mã đơn, khách hàng...">
+              <input type="date" value="2026-11-01">
+              <input type="date" value="2026-11-01">
+              <select><option>Tất cả trạng thái</option><option>Chờ xác nhận</option><option>Đang chế biến</option><option>Hoàn thành</option><option>Đã hủy</option></select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Món ăn</th><th>Khung giờ</th><th>Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                  <tr><td>#DH001</td><td>Nguyễn Văn A</td><td>Bún bò, Chè</td><td>11:00-11:30</td><td>65.000đ</td><td><span class="badge badge-info">Ví Canteen</span></td><td><span class="badge badge-warning">Đang chế biến</span></td><td><button class="btn btn-info btn-sm" onclick="showOrderDetail()">Chi tiết</button></td></tr>
+                  <tr><td>#DH002</td><td>Trần Thị B</td><td>Cơm gà, Sinh tố</td><td>11:00-11:30</td><td>75.000đ</td><td><span class="badge badge-info">QR Bank</span></td><td><span class="badge badge-success">Hoàn thành</span></td><td><button class="btn btn-info btn-sm" onclick="showOrderDetail()">Chi tiết</button></td></tr>
+                  <tr><td>#DH003</td><td>Lê Minh C</td><td>Bún bò, Trà sữa x2</td><td>11:00-11:30</td><td>95.000đ</td><td><span class="badge badge-info">Ví Canteen</span></td><td><span class="badge badge-secondary">Chờ xác nhận</span></td><td><button class="btn btn-info btn-sm" onclick="showOrderDetail()">Chi tiết</button></td></tr>
+                  <tr><td>#DH004</td><td>Phạm Thu D</td><td>Cơm sườn x2, Nước</td><td>11:30-12:00</td><td>85.000đ</td><td><span class="badge badge-secondary">Tiền mặt</span></td><td><span class="badge badge-danger">Đã hủy</span></td><td><button class="btn btn-info btn-sm" onclick="showOrderDetail()">Chi tiết</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== QUẢN LÝ MÓN ĂN ===== -->
+      <div class="page" id="page-monan">
+        <div class="card">
+          <div class="card-header">
+            <h3>🍜 Quản lý món ăn</h3>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modalAddDish')">➕ Thêm món</button>
+          </div>
+          <div class="card-body">
+            <div class="filters">
+              <input type="text" placeholder="🔍 Tên món..." style="flex:1">
+              <select><option>Tất cả danh mục</option><option>Món chính</option><option>Đồ uống</option><option>Ăn vặt</option></select>
+              <select><option>Tất cả trạng thái</option><option>Đang bán</option><option>Tạm hết</option></select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Hình</th><th>Tên món</th><th>Danh mục</th><th>Giá bán</th><th>Đánh giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                  <tr><td>🍜</td><td><b>Bún bò Huế</b></td><td>Món chính</td><td>35.000đ</td><td>⭐ 4.8</td><td><span class="badge badge-success">Đang bán</span></td><td><button class="btn btn-warning btn-sm" onclick="openModal('modalAddDish')">✏️</button> <button class="btn btn-danger btn-sm" onclick="showToast('Đã xóa món','success')">🗑️</button></td></tr>
+                  <tr><td>🍚</td><td><b>Cơm sườn nướng</b></td><td>Món chính</td><td>30.000đ</td><td>⭐ 4.6</td><td><span class="badge badge-success">Đang bán</span></td><td><button class="btn btn-warning btn-sm" onclick="openModal('modalAddDish')">✏️</button> <button class="btn btn-danger btn-sm" onclick="showToast('Đã xóa món','success')">🗑️</button></td></tr>
+                  <tr><td>🧋</td><td><b>Trà sữa Thái</b></td><td>Đồ uống</td><td>20.000đ</td><td>⭐ 4.9</td><td><span class="badge badge-success">Đang bán</span></td><td><button class="btn btn-warning btn-sm" onclick="openModal('modalAddDish')">✏️</button> <button class="btn btn-danger btn-sm" onclick="showToast('Đã xóa món','success')">🗑️</button></td></tr>
+                  <tr><td>🥗</td><td><b>Bánh mì thịt</b></td><td>Ăn vặt</td><td>15.000đ</td><td>⭐ 4.5</td><td><span class="badge badge-secondary">Tạm hết</span></td><td><button class="btn btn-warning btn-sm" onclick="openModal('modalAddDish')">✏️</button> <button class="btn btn-danger btn-sm" onclick="showToast('Đã xóa món','success')">🗑️</button></td></tr>
+                  <tr><td>🍲</td><td><b>Phở bò</b></td><td>Món chính</td><td>40.000đ</td><td>⭐ 4.7</td><td><span class="badge badge-success">Đang bán</span></td><td><button class="btn btn-warning btn-sm" onclick="openModal('modalAddDish')">✏️</button> <button class="btn btn-danger btn-sm" onclick="showToast('Đã xóa món','success')">🗑️</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== KHO NGUYÊN LIỆU ===== -->
+      <div class="page" id="page-kho">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-bottom:16px">
+          <div class="filters" style="margin:0">
+            <input type="text" placeholder="🔍 Tên nguyên liệu...">
+            <select><option>Tất cả nhóm</option><option>Thực phẩm</option><option>Gia vị</option><option>Đồ uống</option></select>
+            <select><option>Tất cả trạng thái</option><option>Bình thường</option><option>Sắp hết</option></select>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-success btn-sm" onclick="openModal('modalNhapKho')">📥 Nhập kho</button>
+            <button class="btn btn-warning btn-sm" onclick="openModal('modalXuatKho')">📤 Xuất kho</button>
+            <button class="btn btn-info btn-sm" onclick="showToast('Mở kiểm kê','info')">📊 Kiểm kê</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>📦 Danh mục nguyên liệu</h3></div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Mã</th><th>Nguyên liệu</th><th>Đơn vị</th><th>Tồn kho</th><th>Tối thiểu</th><th>Hạn sử dụng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                  <tr><td>NL001</td><td>🌾 Gạo tẻ</td><td>kg</td><td><b>5</b></td><td>20</td><td>2026-12-01</td><td><span class="badge badge-warning">Sắp hết</span></td><td><button class="btn btn-info btn-sm" onclick="showToast('Lịch sử nhập xuất','info')">📋</button></td></tr>
+                  <tr><td>NL002</td><td>🥩 Thịt bò</td><td>kg</td><td><b>1.5</b></td><td>10</td><td>2026-11-03</td><td><span class="badge badge-danger">Sắp hết</span></td><td><button class="btn btn-info btn-sm" onclick="showToast('Lịch sử nhập xuất','info')">📋</button></td></tr>
+                  <tr><td>NL003</td><td>🍜 Bún tươi</td><td>kg</td><td><b>15</b></td><td>5</td><td>2026-11-02</td><td><span class="badge badge-success">Bình thường</span></td><td><button class="btn btn-info btn-sm" onclick="showToast('Lịch sử nhập xuất','info')">📋</button></td></tr>
+                  <tr><td>NL004</td><td>🧴 Dầu ăn</td><td>lít</td><td><b>3</b></td><td>10</td><td>2027-06-01</td><td><span class="badge badge-warning">Sắp hết</span></td><td><button class="btn btn-info btn-sm" onclick="showToast('Lịch sử nhập xuất','info')">📋</button></td></tr>
+                  <tr><td>NL005</td><td>🧂 Muối</td><td>kg</td><td><b>8</b></td><td>2</td><td>2027-01-01</td><td><span class="badge badge-success">Bình thường</span></td><td><button class="btn btn-info btn-sm" onclick="showToast('Lịch sử nhập xuất','info')">📋</button></td></tr>
+                  <tr><td>NL006</td><td>🧅 Hành tây</td><td>kg</td><td><b>12</b></td><td>3</td><td>2026-11-10</td><td><span class="badge badge-success">Bình thường</span></td><td><button class="btn btn-info btn-sm" onclick="showToast('Lịch sử nhập xuất','info')">📋</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TÀI CHÍNH ===== -->
+      <div class="page" id="page-taichinh">
+        <div class="kpi-row">
+          <div class="kpi-card"><div class="value">18.500.000đ</div><div class="label">Doanh thu tháng 10</div></div>
+          <div class="kpi-card"><div class="value" style="color:var(--danger)">12.200.000đ</div><div class="label">Chi phí tháng 10</div></div>
+          <div class="kpi-card"><div class="value" style="color:var(--success)">6.300.000đ</div><div class="label">Lợi nhuận</div></div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><h3>💳 Giao dịch gần đây</h3>
+            <div style="display:flex;gap:6px">
+              <select style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"><option>Tất cả loại</option><option>Thanh toán</option><option>Nạp tiền</option><option>Hoàn tiền</option></select>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Đã xuất báo cáo','success')">📥 Xuất Excel</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Mã GD</th><th>Loại</th><th>Khách hàng</th><th>Số tiền</th><th>Phương thức</th><th>Thời gian</th><th>Trạng thái</th></tr></thead>
+                <tbody>
+                  <tr><td>GD001</td><td><span class="badge badge-info">Thanh toán</span></td><td>Nguyễn Văn A</td><td>65.000đ</td><td>Ví Canteen</td><td>10:42 01/11</td><td><span class="badge badge-success">Thành công</span></td></tr>
+                  <tr><td>GD002</td><td><span class="badge badge-success">Nạp tiền</span></td><td>Trần Thị B</td><td>200.000đ</td><td>QR Bank</td><td>10:30 01/11</td><td><span class="badge badge-success">Thành công</span></td></tr>
+                  <tr><td>GD003</td><td><span class="badge badge-warning">Hoàn tiền</span></td><td>Lê Minh C</td><td>45.000đ</td><td>Ví Canteen</td><td>09:55 01/11</td><td><span class="badge badge-success">Thành công</span></td></tr>
+                  <tr><td>GD004</td><td><span class="badge badge-info">Thanh toán</span></td><td>Phạm Thu D</td><td>85.000đ</td><td>Tiền mặt</td><td>09:40 01/11</td><td><span class="badge badge-danger">Thất bại</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>🏷️ Vé tháng</h3><button class="btn btn-primary btn-sm" onclick="openModal('modalVeThang')">➕ Đăng ký</button></div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>Gói</th><th>Giá</th><th>Số suất</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                  <tr><td>🥗 Gói cơ bản</td><td>500.000đ</td><td>20 suất</td><td><button class="btn btn-info btn-sm" onclick="openModal('modalVeThang')">Chi tiết</button></td></tr>
+                  <tr><td>🍱 Gói cao cấp</td><td>800.000đ</td><td>30 suất</td><td><button class="btn btn-info btn-sm" onclick="openModal('modalVeThang')">Chi tiết</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📊 Đối soát thanh toán</h3></div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>Kỳ</th><th>Doanh thu</th><th>Thực thu</th><th>Chênh lệch</th><th>Trạng thái</th></tr></thead>
+                <tbody>
+                  <tr><td>T10/2026</td><td>18.500.000đ</td><td>18.480.000đ</td><td style="color:var(--warning)">-20.000đ</td><td><span class="badge badge-warning">Chênh lệch</span></td></tr>
+                  <tr><td>T9/2026</td><td>17.200.000đ</td><td>17.200.000đ</td><td style="color:var(--success)">0đ</td><td><span class="badge badge-success">Khớp</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BÁO CÁO ===== -->
+      <div class="page" id="page-baocao">
+        <div class="kpi-row" style="margin-bottom:20px">
+          <div class="kpi-card"><div class="value">3.250.000đ</div><div class="label">Tổng doanh thu hôm nay</div></div>
+          <div class="kpi-card"><div class="value">127</div><div class="label">Tổng đơn hàng</div></div>
+          <div class="kpi-card"><div class="value">25.590đ</div><div class="label">Doanh thu TB / đơn</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h3>📈 Doanh thu theo ngày</h3>
+              <div style="display:flex;gap:6px">
+                <select style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"><option>7 ngày</option><option>30 ngày</option><option>Tháng này</option></select>
+                <button class="btn btn-primary btn-sm" onclick="showToast('Đã xuất PDF','success')">📥 Xuất PDF</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-bar-wrap" style="height:150px">
+                <div class="chart-bar" style="height:55%"><div class="tip">25/10: 2.5tr</div></div>
+                <div class="chart-bar" style="height:70%"><div class="tip">26/10: 3.0tr</div></div>
+                <div class="chart-bar" style="height:80%"><div class="tip">27/10: 3.4tr</div></div>
+                <div class="chart-bar" style="height:60%"><div class="tip">28/10: 2.6tr</div></div>
+                <div class="chart-bar" style="height:90%"><div class="tip">29/10: 3.9tr</div></div>
+                <div class="chart-bar" style="height:45%"><div class="tip">30/10: 2.0tr</div></div>
+                <div class="chart-bar" style="height:75%"><div class="tip">01/11: 3.25tr</div></div>
+              </div>
+              <div class="chart-labels"><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>01</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🏆 Top 10 món bán chạy</h3></div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>#</th><th>Món</th><th>SL bán</th><th>Doanh thu</th></tr></thead>
+                <tbody>
+                  <tr><td><b style="color:gold">1</b></td><td>🍜 Bún bò</td><td>48</td><td>1.680.000đ</td></tr>
+                  <tr><td><b style="color:silver">2</b></td><td>🧋 Trà sữa</td><td>62</td><td>1.240.000đ</td></tr>
+                  <tr><td><b style="color:#cd7f32">3</b></td><td>🍚 Cơm sườn</td><td>35</td><td>1.050.000đ</td></tr>
+                  <tr><td>4</td><td>🍲 Phở bò</td><td>28</td><td>1.120.000đ</td></tr>
+                  <tr><td>5</td><td>🥗 Bánh mì</td><td>41</td><td>615.000đ</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CA LÀM VIỆC ===== -->
+      <div class="page" id="page-calamviec">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-outline btn-sm" onclick="changeWeek(-1)">◀ Tuần trước</button>
+            <span id="weekLabel" style="font-size:14px;font-weight:700;color:var(--secondary)"></span>
+            <button class="btn btn-outline btn-sm" onclick="changeWeek(1)">Tuần sau ▶</button>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="openModal('modalDangKyCa')">➕ Đăng ký ca</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('Đã xuất lịch','success')">📥 Xuất Excel</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><h3>📅 Lịch ca tuần</h3>
+            <div style="display:flex;gap:12px;font-size:12px">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#d5f5e3;display:inline-block"></span>Đã làm</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fdebd0;display:inline-block"></span>Đang làm</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#f0f0f0;display:inline-block"></span>Chưa đến</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fde8e8;display:inline-block"></span>Vắng</span>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0;overflow-x:auto">
+            <table id="weekScheduleTable" style="min-width:800px">
+              <thead>
+                <tr id="weekHeaderRow">
+                  <th style="width:110px;padding:12px 14px;background:#f8f9fa;border-bottom:2px solid var(--border)">Ca / Vị trí</th>
+                </tr>
+              </thead>
+              <tbody id="weekScheduleBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>⏱️ Chấm công hôm nay</h3><span id="todayDateLabel" style="font-size:13px;color:var(--text-muted)"></span></div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Nhân viên</th><th>Vị trí</th><th>Vào ca</th><th>Ra ca</th><th>Giờ công</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+              <tbody>
+                <tr><td>Vũ Anh E</td><td>Kho</td><td>06:02</td><td>—</td><td><b>5h58p</b></td><td><span class="badge badge-info">Đang làm</span></td><td><button class="btn btn-warning btn-sm" onclick="showToast('Đã chấm công ra','success')">Ra ca</button></td></tr>
+                <tr><td>Trần Thị B</td><td>Quầy phục vụ</td><td>06:00</td><td>14:05</td><td><b>8h05p</b></td><td><span class="badge badge-success">Hoàn tất</span></td><td><span style="color:var(--text-muted);font-size:13px">—</span></td></tr>
+                <tr><td>Nguyễn Văn A</td><td>Quầy phục vụ</td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-secondary">Chưa đến</span></td><td><button class="btn btn-success btn-sm" onclick="showToast('Đã chấm công vào','success')">Vào ca</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== QUẢN TRỊ ===== -->
+      <div class="page" id="page-quantri">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>👥 Quản lý tài khoản</h3><button class="btn btn-primary btn-sm" onclick="openModal('modalAddUser')">➕ Thêm người dùng</button></div>
+            <div class="card-body">
+              <div class="filters">
+                <input type="text" placeholder="🔍 Tên, email..." style="flex:1">
+                <select><option>Tất cả vai trò</option><option>Admin</option><option>Khách hàng</option><option>NV Phục vụ</option><option>NV Bếp</option></select>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Họ tên</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                  <tbody>
+                    <tr><td>Admin Hệ thống</td><td>admin@canteen.vn</td><td><span class="badge badge-orange">Admin</span></td><td><span class="badge badge-success">Hoạt động</span></td><td><button class="btn btn-warning btn-sm" onclick="showToast('Đã mở form sửa','info')">✏️</button></td></tr>
+                    <tr><td>Trần Thị Bếp</td><td>bep@canteen.vn</td><td><span class="badge badge-info">NV Bếp</span></td><td><span class="badge badge-success">Hoạt động</span></td><td><button class="btn btn-warning btn-sm" onclick="showToast('Đã mở form sửa','info')">✏️</button> <button class="btn btn-danger btn-sm" onclick="showToast('Đã khóa tài khoản','success')">🔒</button></td></tr>
+                    <tr><td>Nguyễn Văn Kho</td><td>kho@canteen.vn</td><td><span class="badge badge-warning">NV Kho</span></td><td><span class="badge badge-danger">Bị khóa</span></td><td><button class="btn btn-success btn-sm" onclick="showToast('Đã mở khóa','success')">🔓</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🛡️ Quản lý vai trò & phân quyền</h3><button class="btn btn-primary btn-sm" onclick="showToast('Thêm vai trò','info')">➕ Thêm vai trò</button></div>
+            <div class="card-body">
+              <table>
+                <thead><tr><th>Vai trò</th><th>Số người dùng</th><th>Mô tả</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="badge badge-orange">Quản trị viên</span></td><td>1</td><td>Toàn quyền hệ thống</td><td><button class="btn btn-info btn-sm" onclick="showToast('Xem quyền Admin','info')">🔑</button></td></tr>
+                  <tr><td><span class="badge badge-info">NV Bếp</span></td><td>3</td><td>Chế biến, thực đơn</td><td><button class="btn btn-info btn-sm" onclick="showToast('Xem quyền Bếp','info')">🔑</button></td></tr>
+                  <tr><td><span class="badge badge-warning">NV Kho</span></td><td>2</td><td>Nhập xuất, kiểm kê</td><td><button class="btn btn-info btn-sm" onclick="showToast('Xem quyền Kho','info')">🔑</button></td></tr>
+                  <tr><td><span class="badge badge-success">NV Phục vụ</span></td><td>5</td><td>Xác nhận đơn, giao món</td><td><button class="btn btn-info btn-sm" onclick="showToast('Xem quyền PV','info')">🔑</button></td></tr>
+                  <tr><td><span class="badge badge-secondary">Khách hàng</span></td><td>248</td><td>Đặt món, xem đơn</td><td><button class="btn btn-info btn-sm" onclick="showToast('Xem quyền KH','info')">🔑</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div style="height:16px"></div>
+        <div class="card">
+          <div class="card-header"><h3>⚙️ Cấu hình hệ thống</h3></div>
+          <div class="card-body">
+            <div class="grid-3">
+              <div class="form-group"><label>Tên cơ sở</label><input type="text" value="Căng Tin Phenikaa"></div>
+              <div class="form-group"><label>Địa chỉ</label><input type="text" value="Hà Đông, Hà Nội"></div>
+              <div class="form-group"><label>Giờ mở cửa</label><input type="text" value="06:30 - 21:00"></div>
+              <div class="form-group"><label>Mức nạp tối thiểu (đ)</label><input type="number" value="20000"></div>
+              <div class="form-group"><label>Cảnh báo hết hạn (ngày)</label><input type="number" value="7"></div>
+              <div class="form-group"><label>In hóa đơn tự động</label><select><option>Bật</option><option>Tắt</option></select></div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Đã lưu cấu hình','success')">💾 Lưu cấu hình</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HỒ SƠ KHÁCH HÀNG ===== -->
+      <div class="page" id="page-hoso">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>👤 Thông tin cá nhân</h3><button class="btn btn-primary btn-sm" onclick="showToast('Đã lưu thay đổi','success')">💾 Lưu</button></div>
+            <div class="card-body">
+              <div style="text-align:center;margin-bottom:20px">
+                <div style="width:80px;height:80px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;margin:0 auto 10px">H</div>
+                <div style="font-size:16px;font-weight:700">Nguyễn Đình Hải</div>
+                <span class="badge badge-info">Khách hàng</span>
+              </div>
+              <div class="form-group"><label>Họ tên</label><input type="text" value="Nguyễn Đình Hải"></div>
+              <div class="form-group"><label>Email</label><input type="email" value="hai@phenikaa.edu.vn"></div>
+              <div class="form-group"><label>Số điện thoại</label><input type="text" value="0987654321"></div>
+              <div class="form-group"><label>Mật khẩu mới</label><input type="password" placeholder="Để trống nếu không đổi"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>💳 Ví Canteen</h3></div>
+            <div class="card-body">
+              <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:14px;padding:24px;margin-bottom:16px">
+                <div style="font-size:13px;opacity:.8">Số dư khả dụng</div>
+                <div style="font-size:32px;font-weight:700;margin:6px 0">150.000đ</div>
+                <div style="font-size:12px;opacity:.7">Cập nhật: 01/11/2026 10:30</div>
+              </div>
+              <div class="form-group"><label>Số tiền nạp (đ)</label><input type="number" placeholder="Tối thiểu 20.000đ" min="20000"></div>
+              <div class="form-group"><label>Phương thức</label><select><option>📱 QR Ngân hàng</option></select></div>
+              <button class="btn btn-success btn-full" onclick="showToast('Đã tạo mã QR nạp tiền','success')">💳 Nạp tiền ngay</button>
+              <div style="margin-top:14px">
+                <div style="font-size:13px;font-weight:600;margin-bottom:8px">Lịch sử nạp tiền</div>
+                <table style="font-size:12px">
+                  <thead><tr><th>Số tiền</th><th>Phương thức</th><th>Thời gian</th><th>Trạng thái</th></tr></thead>
+                  <tbody>
+                    <tr><td>200.000đ</td><td>QR Bank</td><td>30/10 09:00</td><td><span class="badge badge-success">✓</span></td></tr>
+                    <tr><td>100.000đ</td><td>QR Bank</td><td>25/10 14:30</td><td><span class="badge badge-success">✓</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<div class="modal-bg" id="modalAddDish">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalAddDish')">✕</button>
+    <h3>🍜 Thêm / Sửa món ăn</h3>
+    <div class="form-group"><label>Tên món *</label><input type="text" placeholder="Bún bò Huế..."></div>
+    <div class="form-group"><label>Danh mục *</label><select><option>Món chính</option><option>Đồ uống</option><option>Ăn vặt</option></select></div>
+    <div class="form-group"><label>Giá bán (đ) *</label><input type="number" placeholder="35000" min="1000"></div>
+    <div class="form-group"><label>Mô tả</label><input type="text" placeholder="Bún bò cay, nước dùng đậm đà..."></div>
+    <div class="form-group"><label>Trạng thái</label><select><option>Đang bán</option><option>Tạm hết</option></select></div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn btn-primary" onclick="showToast('Đã lưu món ăn','success');closeModal('modalAddDish')">💾 Lưu</button>
+      <button class="btn btn-outline" onclick="closeModal('modalAddDish')">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalNhapKho">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalNhapKho')">✕</button>
+    <h3>📥 Phiếu nhập kho</h3>
+    <div class="form-group"><label>Nguyên liệu *</label><select><option>Gạo tẻ</option><option>Thịt bò</option><option>Bún tươi</option><option>Dầu ăn</option></select></div>
+    <div class="form-group"><label>Số lượng nhập *</label><input type="number" placeholder="50" min="0.01"></div>
+    <div class="form-group"><label>Đơn vị</label><input type="text" value="kg" readonly></div>
+    <div class="form-group"><label>Hạn sử dụng *</label><input type="date"></div>
+    <div class="form-group"><label>Nhà cung cấp</label><select><option>Công ty ABC</option><option>Cơ sở XYZ</option></select></div>
+    <div class="form-group"><label>Ghi chú</label><input type="text" placeholder="Lô hàng tháng 11..."></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-success" onclick="showToast('Đã lưu phiếu nhập kho','success');closeModal('modalNhapKho')">✅ Xác nhận nhập</button>
+      <button class="btn btn-outline" onclick="closeModal('modalNhapKho')">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalXuatKho">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalXuatKho')">✕</button>
+    <h3>📤 Phiếu xuất kho</h3>
+    <div class="form-group"><label>Nguyên liệu *</label><select><option>Gạo tẻ</option><option>Thịt bò</option><option>Bún tươi</option></select></div>
+    <div class="form-group"><label>Số lượng xuất *</label><input type="number" placeholder="2" min="0.01"></div>
+    <div class="form-group"><label>Mục đích *</label><select><option>Chế biến</option><option>Điều chuyển</option><option>Khác</option></select></div>
+    <div class="form-group"><label>Lý do</label><input type="text" placeholder="Chế biến ca sáng..."></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-warning" onclick="showToast('Đã lưu phiếu xuất kho','success');closeModal('modalXuatKho')">✅ Xác nhận xuất</button>
+      <button class="btn btn-outline" onclick="closeModal('modalXuatKho')">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalVeThang">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalVeThang')">✕</button>
+    <h3>🏷️ Đăng ký vé tháng</h3>
+    <div class="form-group"><label>Gói vé</label><select><option>Gói cơ bản - 500.000đ (20 suất)</option><option>Gói cao cấp - 800.000đ (30 suất)</option></select></div>
+    <div class="form-group"><label>Thanh toán bằng</label><select><option>💳 Ví Canteen (Số dư: 150.000đ)</option><option>📱 QR Bank</option></select></div>
+    <div style="background:var(--primary-light);border-radius:8px;padding:12px;font-size:13px;margin-bottom:14px">
+      ⚠️ Số dư Ví Canteen không đủ. Vui lòng nạp thêm hoặc chọn QR Bank.
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="showToast('Đã đăng ký vé tháng','success');closeModal('modalVeThang')">✅ Đăng ký</button>
+      <button class="btn btn-outline" onclick="closeModal('modalVeThang')">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalDangKyCa">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalDangKyCa')">✕</button>
+    <h3>📅 Đăng ký khung giờ có thể làm</h3>
+    <div class="form-group"><label>Tuần</label><select><option>Tuần 45 (04-10/11/2026)</option><option>Tuần 46 (11-17/11/2026)</option></select></div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Chọn ngày và ca có thể làm:</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked> T2 - Ca sáng</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox"> T2 - Ca chiều</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked> T3 - Ca sáng</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox"> T4 - Ca sáng</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked> T5 - Ca chiều</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox"> T6 - Ca sáng</label>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="showToast('Đã lưu đăng ký ca','success');closeModal('modalDangKyCa')">💾 Lưu đăng ký</button>
+      <button class="btn btn-outline" onclick="closeModal('modalDangKyCa')">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalAddUser">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalAddUser')">✕</button>
+    <h3>👤 Thêm người dùng</h3>
+    <div class="form-group"><label>Họ tên *</label><input type="text" placeholder="Nguyễn Văn A..."></div>
+    <div class="form-group"><label>Email *</label><input type="email" placeholder="user@canteen.vn"></div>
+    <div class="form-group"><label>Số điện thoại</label><input type="text" placeholder="0987654321"></div>
+    <div class="form-group"><label>Mật khẩu tạm *</label><input type="password" placeholder="Tối thiểu 8 ký tự"></div>
+    <div class="form-group"><label>Vai trò *</label><select><option>Khách hàng</option><option>NV Phục vụ</option><option>NV Bếp</option><option>NV Kho</option><option>NV Kế toán</option><option>Quản trị viên</option></select></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="showToast('Đã tạo tài khoản','success');closeModal('modalAddUser')">✅ Tạo tài khoản</button>
+      <button class="btn btn-outline" onclick="closeModal('modalAddUser')">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalOrderDetail">
+  <div class="modal">
+    <button class="close" onclick="closeModal('modalOrderDetail')">✕</button>
+    <h3>📋 Chi tiết đơn hàng #DH001</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;margin-bottom:14px">
+      <div><b>Khách hàng:</b> Nguyễn Văn A</div>
+      <div><b>Khung giờ:</b> 11:00-11:30</div>
+      <div><b>Đặt lúc:</b> 10:42 01/11/2026</div>
+      <div><b>Thanh toán:</b> Ví Canteen</div>
+    </div>
+    <table style="margin-bottom:14px">
+      <thead><tr><th>Món</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+      <tbody>
+        <tr><td>🍜 Bún bò</td><td>1</td><td>35.000đ</td><td>35.000đ</td></tr>
+        <tr><td>🍮 Chè thái</td><td>1</td><td>15.000đ</td><td>15.000đ</td></tr>
+        <tr><td colspan="3" style="text-align:right;font-weight:700">Tổng:</td><td style="font-weight:700;color:var(--primary)">50.000đ</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:8px">
+      <span class="badge badge-warning">Đang chế biến</span>
+      <button class="btn btn-outline btn-sm" onclick="showToast('In hóa đơn...','info')">🖨️ In hóa đơn</button>
+      <button class="btn btn-danger btn-sm" onclick="showToast('Đã hủy đơn','success');closeModal('modalOrderDetail')">❌ Hủy đơn</button>
+    </div>
+  </div>
+</div>
+
+<!-- Load data trước, rồi mới load script -->
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

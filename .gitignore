@@ -1,0 +1,6 @@
+node_modules/
+canteen-web/data/*.db
+canteen-web/data/*.db-*
+chuong1.txt
+*.log
+.env
